@@ -2,7 +2,8 @@ import React from 'react';
 
 const Student = ({ student }) => {
     return (
-        <li>{student.name}</li>
+        <li className='student'>{student.name} {student.transport}</li>
+
     );
 };
 
