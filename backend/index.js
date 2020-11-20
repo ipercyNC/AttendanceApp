@@ -2,6 +2,7 @@ const { response } = require('express');
 const express = require('express');
 var bodyParser = require('body-parser');
 const app = express();
+const cors = require('cors');
 const requestLogger = (request, response, next) => {
     console.log('Method: ', request.method);
     console.log('Path: ', request.path);
@@ -10,7 +11,7 @@ const requestLogger = (request, response, next) => {
     next();
 };
 
-
+app.use(cors());
 app.use(bodyParser.json());
 app.use(requestLogger);
 
@@ -88,7 +89,7 @@ app.post('/api/students', (request, response) => {
     response.json(student);
 });
 
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
