@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/ipercyNC/AttendanceApp/issues"
   },
-  "homepage": "https://github.com/ipercyNC/AttendanceApp#readme"
+  "homepage": "https://github.com/ipercyNC/AttendanceApp#readme",
+  "dependencies": {
+    "cors": "^2.8.5"
+  }
 }
