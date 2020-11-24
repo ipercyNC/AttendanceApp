@@ -7,7 +7,7 @@ const App = (props) => {
   const [newStudent, setNewStudent] = useState('Add Student...');
   const [showCars, setShowCars] = useState(false);
   const [showBusses, setShowBusses] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
+  const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
     console.log('effect');
