@@ -18,24 +18,6 @@ app.use(bodyParser.json());
 app.use(requestLogger);
 app.use(express.static('build'));
 
-let students = [
-    {
-        id: 1,
-        name: 'John Smith',
-        transport: 'Car'
-    },
-    {
-        id: 2,
-        name: 'Jane Smith',
-        transport: 'Car'
-    },
-    {
-        id: 3,
-        name: 'Jake Smith',
-        transport: 'Bus'
-    }
-];
-
 
 //Landing page for Index/root
 app.get('/', (request, response) => {
@@ -51,28 +33,33 @@ app.get('/api/students', (request, response) => {
 
 //GET student by ID
 app.get('/api/students/:id', (request, response) => {
-    const id = Number(request.params.id);
-    const student = students.find(student => student.id === id);
-    if(student)
-        response.json(student);
-    else
-        response.status(404).end();
+    Student.findById(request.params.id)
+    .then(student => {
+        if(student){
+            response.json(student);
+        } else{
+            response.status(404).end();
+        }
+    })
+    .catch(error => {
+        console.log(error);
+        response.status(500).end();
+    });
 });
 
 //DELETE student by ID
 app.delete('/api/students/:id', (request, response) => {
-    const id = Number(request.params.id);
-    students = students.filter(student => student.id !== id);
-    response.status(204).end();
+   Student.findByIdRemove(request.params.id)
+    .then(result => {
+        response.status(240).end();
+    })
+    .catch(error => {
+        next(error);
+    });
 });
 
 //Generate ID to be used with POST student
-const generateID = () => {
-    const maxId = students.length > 0 ?
-        Math.max(...students.map(n=>n.id))
-        : 0
-    return maxId + 1;
-};
+
 
 //POST student
 app.post('/api/students', (request, response) => {
@@ -84,15 +71,14 @@ app.post('/api/students', (request, response) => {
         });
     }
 
-    const student = {
-        id: generateID(),
+    const student = new Student({
         name: body.name,
-        transport: body.transport
-    };
+        transport: Math.random() > 0.5? 'Car':'Bus'
+    });
 
-    students = students.concat(student);
-
-    response.json(student);
+    student.save().then(savedStudent => {
+        response.json(savedStudent);
+    })
 });
 
 const PORT = process.env.PORT;
