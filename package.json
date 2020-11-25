@@ -24,6 +24,7 @@
   "homepage": "https://github.com/ipercyNC/AttendanceApp#readme",
   "dependencies": {
     "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
     "mongoose": "^5.10.15"
   }
 }
