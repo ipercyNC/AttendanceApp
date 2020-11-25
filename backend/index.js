@@ -1,8 +1,11 @@
+require('dotenv').config();
 const { response } = require('express');
 const express = require('express');
 var bodyParser = require('body-parser');
 const app = express();
 const cors = require('cors');
+const Student = require('./models/student');
+const config = require('./config');
 const requestLogger = (request, response, next) => {
     console.log('Method: ', request.method);
     console.log('Path: ', request.path);
@@ -34,6 +37,7 @@ let students = [
     }
 ];
 
+
 //Landing page for Index/root
 app.get('/', (request, response) => {
     response.send('<h1>Hello World!</h1>');
@@ -41,7 +45,9 @@ app.get('/', (request, response) => {
 
 //Get all students 
 app.get('/api/students', (request, response) => {
-    response.json(students);
+    Student.find({}).then(students => {
+        response.json(students);
+    });
 });
 
 //GET student by ID
@@ -90,7 +96,7 @@ app.post('/api/students', (request, response) => {
     response.json(student);
 });
 
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PORT;
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });
