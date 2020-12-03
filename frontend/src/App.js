@@ -49,6 +49,26 @@ const App = (props) => {
     setNewStudent(event.target.value);
   };
 
+  const toggleTransportType = id => {
+    const student = students.find(s => s.id === id);
+    const changedStudent = 
+      { ...student, 
+        transport: student.transport === 'Car'? 'Bus': 'Car'
+      };
+      console.log("changed student " , changedStudent)
+    studentService
+      .update(id, changedStudent)
+      .then(returnedStudent => {
+        setStudents(students.map(student => student.id !== id ? student: returnedStudent));
+      })
+      .catch(error => {
+        console.log(error);
+        alert(`The student '${student.name}' was already deleted from the server`);
+
+        setStudents(students.filter(s => s.id !==id));
+      });
+  };
+
   const studentsToShow = !showCars && !showBusses 
     ? students
       : !showCars
@@ -71,7 +91,11 @@ const App = (props) => {
       </div>
       <ul>
         {studentsToShow.map(student => 
-          <Student key={student.id} student={student} />
+          <Student 
+            key={student.id} 
+            student={student} 
+            toggleTransport={() => toggleTransportType(student.id)} 
+          />
         )}
       </ul>
       <form onSubmit={addStudent}>

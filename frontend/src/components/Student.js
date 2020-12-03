@@ -1,8 +1,15 @@
 import React from 'react';
 
-const Student = ({ student }) => {
+const Student = ({ student, toggleTransport }) => {
+    const transportType = student.transport === 'Car'? 'Change to Bus': 'Change to Car' 
     return (
-        <li className='student'>{student.name} {student.transport}</li>
+        <li className='student'>
+            <p>  
+                Name: {student.name} <br/>
+                Transport Type: {student.transport} 
+                <button onClick={toggleTransport}>{transportType}</button>
+            </p>
+          </li>
 
     );
 };

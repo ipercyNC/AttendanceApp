@@ -19,10 +19,6 @@ app.use(requestLogger);
 app.use(express.static('build'));
 
 
-//Landing page for Index/root
-app.get('/', (request, response) => {
-    response.send('<h1>Hello World!</h1>');
-});
 
 //Get all students 
 app.get('/api/students', (request, response) => {
@@ -31,8 +27,11 @@ app.get('/api/students', (request, response) => {
     });
 });
 
+
+
+
 //GET student by ID
-app.get('/api/students/:id', (request, response) => {
+app.get('/api/students/:id', (request, response, next) => {
     Student.findById(request.params.id)
     .then(student => {
         if(student){
@@ -41,17 +40,16 @@ app.get('/api/students/:id', (request, response) => {
             response.status(404).end();
         }
     })
-    .catch(error => {
-        console.log(error);
-        response.status(500).end();
-    });
+    .catch(error => next(error));
 });
+
+
 
 //DELETE student by ID
 app.delete('/api/students/:id', (request, response) => {
    Student.findByIdRemove(request.params.id)
     .then(result => {
-        response.status(240).end();
+        response.status(204).end();
     })
     .catch(error => {
         next(error);
@@ -80,6 +78,37 @@ app.post('/api/students', (request, response) => {
         response.json(savedStudent);
     })
 });
+
+app.put('/api/students/:id', (request, response,next) => {
+    console.log("here");
+    const body = request.body;
+    const student = {
+        name: body.name,
+        transport: body.transport
+    };
+
+    console.log("backend ",body);
+    Student.findByIdAndUpdate(request.params.id, student, { new: true} )
+        .then(updatedStudent => {
+            response.json(updatedStudent);
+        })
+        .catch(error => next(error));
+});
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' });
+};
+
+app.use(unknownEndpoint);
+
+const errorHandler = (error, request, response, next) => {
+    console.error(error.message);
+
+    if(error.name === 'CastError'){
+        return response.status(400).send({ error: 'malformatted id' });
+    }
+    next(error);
+};
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
