@@ -4,7 +4,8 @@ import studentService from './services/students';
 import Notification from './components/Notification';
 const App = (props) => {
   const [students,setStudents] = useState([]);
-  const [newStudent, setNewStudent] = useState('Add Student...');
+  const [studentName, setStudentName] = useState('');
+  const [studentTransport, setStudentTransport] = useState('');
   const [showCars, setShowCars] = useState(false);
   const [showBusses, setShowBusses] = useState(false);
   const [successMessage, setSuccessMessage] = useState(null);
@@ -25,14 +26,15 @@ const App = (props) => {
   const addStudent = (event) => {
     event.preventDefault();
     const studentObject = {
-      name: newStudent,
-      transport: Math.random() < 0.5? 'Car': 'Bus'
+      name: studentName,
+      transport: studentTransport
     };
     studentService
       .create(studentObject)
       .then(returnedStudent => {
         setStudents(students.concat(returnedStudent));
-        setNewStudent('');
+        setStudentName('');
+        setStudentTransport('');
         setSuccessMessage(
           `Student '${returnedStudent.name}' was added`
         );
@@ -45,9 +47,13 @@ const App = (props) => {
       });
   };
   
-  const handleStudentChange = (event) => {
-    setNewStudent(event.target.value);
+  const handleNameChange = event => {
+    setStudentName(event.target.value);
   };
+
+  const handleTransportChange = event => {
+    setStudentTransport(event.target.value);
+  }
 
   const toggleTransportType = id => {
     const student = students.find(s => s.id === id);
@@ -99,7 +105,9 @@ const App = (props) => {
         )}
       </ul>
       <form onSubmit={addStudent}>
-        <input value ={newStudent} onChange={handleStudentChange}/>
+        Add New Student: 
+        <input value ={studentName} onChange={handleNameChange} placeholder="Student Name"/>
+        <input value ={studentTransport} onChange={handleTransportChange} placeholder="Car/Bus"/>
         <button type="submit">Save</button>
       </form>
     </div>

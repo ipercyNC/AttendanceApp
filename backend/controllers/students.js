@@ -1,44 +1,33 @@
 const studentsRouter = require('express').Router();
-const Student = require('./models/student');
+const Student = require('../models/student');
 
-studentsRouter.get('/', (request, response) => {
-	Student.find({}).then(students => {
-		response.json(students);
-	});
+studentsRouter.get('/', async (request, response) => {
+	const students = await Student.find({});
+	response.json(students);
 });
 
-studentsRouter.get('/:id', (request, response, next) => {
-	Student.findById(request.params.id)
-		.then(student => {
-			if(student)
-				response.json(student);
-			else
-				response.status(404).end();
-		})
-		.catch(error => next(error));
+studentsRouter.get('/:id', async (request, response) => {
+	const student = await Student.findById(request.params.id);
+	if(student)
+		response.json(student);
+	else
+		response.status(404).end();
 });
 
-studentsRouter.post('/', (request, response, next) => {
+studentsRouter.post('/', async (request, response) => {
 	const body = request.body;
 
 	const student = new Student({
 		name: body.name,
 		transport: body.transport
 	});
-
-	student.save()
-		.then(savedStudent => {
-			response.json(savedStudent);
-		})
-		.catch(error=> next(error));
+	const savedStudent = await student.save();
+	response.json(savedStudent);
 });
 
-studentsRouter.delete('/:id', (request, response, next) => {
-	Student.findByIdAndRemove(request.params.id)
-		.then(() => {
-			response.status(204).end();
-		})
-		.catch(error => next(error));
+studentsRouter.delete('/:id', async (request, response) => {
+	await Student.findByIdAndRemove(request.params.id);
+	response.status(204).end();
 });
 
 studentsRouter.put('/:id', (request, response, next) => {
@@ -48,7 +37,7 @@ studentsRouter.put('/:id', (request, response, next) => {
 		transport: body.transport
 	};
 
-	Student.findByIdandUpdate(request.params.id, student, { new: true })
+	Student.findByIdAndUpdate(request.params.id, student, { new: true })
 		.then(updatedStudent => {
 			response.json(updatedStudent);
 		})
