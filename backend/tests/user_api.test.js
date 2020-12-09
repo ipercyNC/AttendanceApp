@@ -93,7 +93,6 @@ describe('User lists students properly', () => {
 		const currentUser = await User
 			.find({ username: currentUsername });
 		const currentUserId = currentUser[0]._id;
-		console.log(currentUserId);
 
 		const newStudent = {
 			name: 'Michael Scott',
