@@ -1,10 +1,12 @@
 const supertest = require('supertest');
 const mongoose = require('mongoose');
 const helper = require('./test_helper');
+const bcrypt = require('bcrypt');
 const app = require('../app');
 const api = supertest(app);
 
 const Student = require('../models/student');
+const User = require('../models/user');
 
 beforeEach(async() => {
 	await Student.deleteMany({});
@@ -55,7 +57,7 @@ describe('Viewing a specific Student', () => {
 	test('Fails with 404 if Student does not exist', async () => {
 		const validNonexistingId = await helper.nonExistingId();
 
-		console.log("Valid non-existing ID : ", validNonexistingId);
+		console.log('Valid non-existing ID : ', validNonexistingId);
 
 		await api
 			.get(`/api/students/${validNonexistingId}`)
@@ -73,10 +75,26 @@ describe('Viewing a specific Student', () => {
 });
 
 describe('Addition of a new Student', () => {
+	beforeEach(async () => {
+		await User.deleteMany({});
+
+		const passwordHash = await bcrypt.hash('password', 10);
+		const user = new User({ username: 'root', passwordHash });
+
+		await user.save();
+	});
 	test('Succeeds with valid data', async () => {
+		const usersAtStart = await helper.usersInDb();
+
+		const currentUsername = usersAtStart[0].username;
+		const currentUser = await User
+			.find({ username: currentUsername });
+		const currentUserId = currentUser[0]._id;
+
 		const newStudent = {
 			name: 'Michael Scott',
-			transport: 'Car'
+			transport: 'Car',
+			userId: currentUserId
 		};
 
 		await api
@@ -93,8 +111,16 @@ describe('Addition of a new Student', () => {
 	});
 
 	test('Fails with 400 if data is missing', async () => {
+		const usersAtStart = await helper.usersInDb();
+
+		const currentUsername = usersAtStart[0].username;
+		const currentUser = await User
+			.find({ username: currentUsername });
+		const currentUserId = currentUser[0]._id;
+
 		const newStudent = {
-			transport: 'Car'
+			name: 'Michael Scott',
+			userId: currentUserId
 		};
 
 		await api

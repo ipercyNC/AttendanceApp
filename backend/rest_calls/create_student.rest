@@ -2,6 +2,7 @@ POST http://localhost:3001/api/students HTTP/1.1
 content-type: application/json
 
 {
-    "name": "sample",
-    "transport": "Car"
+    "name": "Ron Burgundy",
+    "transport": "Bus",
+	"userId": "5fd14d231209780a588efe73"
 }

@@ -8,6 +8,10 @@ const studentSchema = new mongoose.Schema({
 	transport: {
 		type: String,
 		required: true
+	},
+	user: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'User'
 	}
 });
 studentSchema.set('toJSON', {

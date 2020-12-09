@@ -1,8 +1,10 @@
 const studentsRouter = require('express').Router();
 const Student = require('../models/student');
+const User = require('../models/user');
 
 studentsRouter.get('/', async (request, response) => {
-	const students = await Student.find({});
+	const students = await Student
+		.find({}).populate('user', { username: 1, name: 1 });
 	response.json(students);
 });
 
@@ -16,12 +18,19 @@ studentsRouter.get('/:id', async (request, response) => {
 
 studentsRouter.post('/', async (request, response) => {
 	const body = request.body;
+	console.log(body);
+
+	const user = await User.findById(body.userId);
 
 	const student = new Student({
 		name: body.name,
-		transport: body.transport
+		transport: body.transport,
+		user: user._id
 	});
 	const savedStudent = await student.save();
+	user.students = user.students.concat(savedStudent._id);
+	await user.save();
+
 	response.json(savedStudent);
 });
 
