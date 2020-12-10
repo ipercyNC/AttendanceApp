@@ -2,6 +2,16 @@ const studentsRouter = require('express').Router();
 const Student = require('../models/student');
 const User = require('../models/user');
 
+const jwt = require('jsonwebtoken');
+
+const getTokenFrom = request => {
+	const authorization = request.get('authorization');
+	if (authorization && authorization.toLowerCase().startsWith('bearer ')){
+		return authorization.substring(7);
+	}
+	return null;
+};
+
 studentsRouter.get('/', async (request, response) => {
 	const students = await Student
 		.find({}).populate('user', { username: 1, name: 1 });
@@ -18,9 +28,13 @@ studentsRouter.get('/:id', async (request, response) => {
 
 studentsRouter.post('/', async (request, response) => {
 	const body = request.body;
-	console.log(body);
+	const token = getTokenFrom(request);
+	const decodedToken = jwt.verify(token, process.env.SECRET);
+	if (!token || !decodedToken.id){
+		return response.status(401).json({ error: 'Token missing or invalid ' });
+	}
 
-	const user = await User.findById(body.userId);
+	const user = await User.findById(decodedToken.id);
 
 	const student = new Student({
 		name: body.name,

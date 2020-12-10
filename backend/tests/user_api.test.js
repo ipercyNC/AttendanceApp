@@ -86,34 +86,35 @@ describe('User lists students properly', () => {
 		await user.save();
 	});
 
-	test('Success -- Create user with new username', async () => {
-		const usersAtStart = await helper.usersInDb();
+	test('Success -- Create student with user credentials', async () => {
+		const loginUser = {
+			'username': 'root',
+			'password': 'password'
+		};
 
-		const currentUsername = usersAtStart[0].username;
-		const currentUser = await User
-			.find({ username: currentUsername });
-		const currentUserId = currentUser[0]._id;
+		const loginResult = await api
+			.post('/api/login')
+			.send(loginUser)
+			.expect(200);
 
+		const tokenString = `bearer ${loginResult.body.token}`;
 		const newStudent = {
 			name: 'Michael Scott',
-			transport: 'Car',
-			userId: currentUserId
+			transport: 'Car'
 		};
 
 		await api
 			.post('/api/students')
 			.send(newStudent)
+			.set( { Authorization: tokenString })
 			.expect(200)
 			.expect('Content-Type', /application\/json/);
-
-		const usersAtEnd = await helper.usersInDb();
-		expect(usersAtEnd).toHaveLength(usersAtStart.length);
 
 		const studentsAtEnd = await helper.studentsInDb();
 		expect(studentsAtEnd).toHaveLength(1);
 
-		const usersWithStudents = studentsAtEnd.map(u => u.user);
-		expect(usersWithStudents).toContainEqual(currentUserId);
+		const names = studentsAtEnd.map(s => s.name);
+		expect(names).toContain('Michael Scott');
 	});
 
 });

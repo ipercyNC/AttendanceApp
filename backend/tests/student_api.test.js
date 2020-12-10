@@ -84,22 +84,26 @@ describe('Addition of a new Student', () => {
 		await user.save();
 	});
 	test('Succeeds with valid data', async () => {
-		const usersAtStart = await helper.usersInDb();
+		const loginUser = {
+			'username': 'root',
+			'password': 'password'
+		};
 
-		const currentUsername = usersAtStart[0].username;
-		const currentUser = await User
-			.find({ username: currentUsername });
-		const currentUserId = currentUser[0]._id;
+		const loginResult = await api
+			.post('/api/login')
+			.send(loginUser)
+			.expect(200);
 
+		const tokenString = `bearer ${loginResult.body.token}`;
 		const newStudent = {
 			name: 'Michael Scott',
-			transport: 'Car',
-			userId: currentUserId
+			transport: 'Car'
 		};
 
 		await api
 			.post('/api/students')
 			.send(newStudent)
+			.set( { Authorization: tokenString })
 			.expect(200)
 			.expect('Content-Type', /application\/json/);
 
@@ -111,21 +115,25 @@ describe('Addition of a new Student', () => {
 	});
 
 	test('Fails with 400 if data is missing', async () => {
-		const usersAtStart = await helper.usersInDb();
+		const loginUser = {
+			'username': 'root',
+			'password': 'password'
+		};
 
-		const currentUsername = usersAtStart[0].username;
-		const currentUser = await User
-			.find({ username: currentUsername });
-		const currentUserId = currentUser[0]._id;
+		const loginResult = await api
+			.post('/api/login')
+			.send(loginUser)
+			.expect(200);
 
+		const tokenString = `bearer ${loginResult.body.token}`;
 		const newStudent = {
-			name: 'Michael Scott',
-			userId: currentUserId
+			name: 'Michael Scott'
 		};
 
 		await api
 			.post('/api/students')
 			.send(newStudent)
+			.set( { Authorization: tokenString })
 			.expect(400);
 
 		const studentsAtEnd = await helper.studentsInDb();
