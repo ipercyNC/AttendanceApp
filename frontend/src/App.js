@@ -57,9 +57,9 @@ const App = () => {
 
 	const handleLogin = async userObject => {
 		try{
-			const user = await loginService.login({
+			const user = await loginService.login(
 				userObject
-			});
+			);
 			window.localStorage.setItem(
 				'loggedInUser', JSON.stringify(user)
 			);
