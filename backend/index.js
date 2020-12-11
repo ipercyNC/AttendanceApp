@@ -4,7 +4,7 @@ const http = require('http');
 const fs = require('fs');
 const config = require('./utils/config.js');
 const logger = require('./utils/logger');
-
+/*
 let server = null;
 if (process.env.NODE_ENV !== 'production'){
 	const options = {
@@ -14,6 +14,9 @@ if (process.env.NODE_ENV !== 'production'){
 	server = https.createServer(options, app);
 }else
 	server = http.createServer(app);
+*/
+
+const server = http.createServer(app);
 
 server.listen(config.PORT, () => {
 	logger.info(`Server running on port ${config.PORT}`);
