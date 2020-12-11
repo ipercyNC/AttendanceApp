@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "frontend:dev": "cd frontend && npm run start",
-    "backend:dev": "cd backend && npm run start",
+    "backend:dev": "cd backend && npm run dev",
     "build:ui": "rm -rf backend/build && cd frontend && npm run build --prod && cp -r build ../backend ",
     "deploy": "git push heroku main",
     "deploy:full": "npm run build:ui && git add . && git commit -m uibuild && npm run deploy",
@@ -31,6 +31,7 @@
     "express-async-errors": "^3.1.1",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.10.15",
-    "mongoose-unique-validator": "^2.0.3"
+    "mongoose-unique-validator": "^2.0.3",
+    "prop-types": "^15.7.2"
   }
 }
