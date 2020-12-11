@@ -8,7 +8,7 @@ import LoginForm from './components/LoginForm';
 import Togglable from './components/Togglable';
 import StudentForm from './components/StudentForm';
 
-const App = (props) => {
+const App = () => {
 	const [students,setStudents] = useState([]);
 	const [showCars, setShowCars] = useState(false);
 	const [showBusses, setShowBusses] = useState(false);
