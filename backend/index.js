@@ -5,15 +5,14 @@ const fs = require('fs');
 const config = require('./utils/config.js');
 const logger = require('./utils/logger');
 
-const options = {
-	key: fs.readFileSync('client-key.pem'),
-	cert: fs.readFileSync('client-cert.pem')
-};
-console.log(options);
 let server = null;
-if (process.env.NODE_ENV !== 'production')
+if (process.env.NODE_ENV !== 'production'){
+	const options = {
+		key: fs.readFileSync('client-key.pem'),
+		cert: fs.readFileSync('client-cert.pem')
+	};
 	server = https.createServer(options, app);
-else
+}else
 	server = http.createServer(app);
 
 server.listen(config.PORT, () => {
