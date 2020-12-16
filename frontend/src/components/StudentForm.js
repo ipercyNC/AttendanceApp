@@ -24,12 +24,12 @@ const StudentForm = ({ createStudent }) => {
 	};
 
 	return (
-		<div>
+		<div className='studentFormDiv'>
 			<h2>Create a new Student</h2>
 			<form onSubmit={addStudent}>
 			Add New Student:
-				<input value ={newStudentName} onChange={handleNameChange} placeholder="Student Name"/>
-				<input value ={newStudentTransport} onChange={handleTransportChange} placeholder="Car/Bus"/>
+				<input className='studentNameInput' value ={newStudentName} onChange={handleNameChange} placeholder="Student Name"/>
+				<input className='studentTransportInput' value ={newStudentTransport} onChange={handleTransportChange} placeholder="Car/Bus"/>
 				<button type="submit">Save</button>
 			</form>
 		</div>
